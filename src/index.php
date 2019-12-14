@@ -16,9 +16,9 @@ function printCommentBoard() {
 
 <!DOCTYPE html>
 <html>
-<?php include_once('head.php');?>
+<?php include_once('templ_head.php');?>
   <body>
-  <?php include_once('nav.php'); ?>
+  <?php include_once('templ_nav.php'); ?>
     <section class="container">
       <?php if ($sessionStatus) printCommentBoard(); ?>
       <div class="messages">
@@ -28,7 +28,7 @@ function printCommentBoard() {
         ?> 
       </div>
     </section>
-    <script src='index.js'></script>
-    <script src="./handleNavClass.js"></script>
+    <script defer src="./handleNavClass.js"></script>
+    <script defer src='index.js'></script>
   </body>
 </html>

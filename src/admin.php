@@ -5,15 +5,12 @@ require_once('./function/isAdmin.php');
 require_once('./utils.php');
 
 if (!isAdmin($conn)) header('Location: ./index.php');
-
 ?>
-
-
 <!DOCTYPE html>
 <html>
-<?php include_once('head.php');?>
+<?php include_once('templ_head.php');?>
   <body>
-  <?php include_once('nav.php'); ?>
+  <?php include_once('templ_nav.php'); ?>
     <section class="container">
       <div class="messages">
         <?php 
@@ -22,7 +19,7 @@ if (!isAdmin($conn)) header('Location: ./index.php');
         ?> 
       </div>
     </section>
-    <script src='index.js'></script>
-    <script src="./handleNavClass.js"></script>
+    <script defer src="./handleNavClass.js"></script>
+    <script defer src='index.js'></script>
   </body>
 </html>

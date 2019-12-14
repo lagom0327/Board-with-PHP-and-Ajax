@@ -81,6 +81,15 @@ function deleteComment($conn) {
   echo json_encode('success');
 }
 
+function notAuthor() {
+  echo(json_encode('You aren\'t the author!'));
+  header('HTTP/1.1 401  Unauthorized');
+}
+
+function noParameter($str) {
+  echo(json_encode('lack of ' . $str));
+  header('HTTP/1.1 400 bad request');
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -89,22 +98,24 @@ if (!$sessionStatus) exit();
 switch ($method) {
   case 'GET':
     get20Mess($conn);
-    break;
+  break;
   case 'POST':
-    if (empty($_POST['content'])) die('empty data');
+    if (empty($_POST['content'])) exit(noParameter('content'));
     if (isset($_POST['parentId'])) addSubComment($conn);
     else if (isset($_POST['id'])) {
-      if (empty($_POST['id']) || (!isCommentAuthor($conn) && !isAdmin($conn))) exit();
+      if (empty($_POST['id'])) exit(noParameter('id'));
+      if (!isCommentAuthor($conn) && !isAdmin($conn)) exit(notAuthor());
       editeComment($conn);
     }
     else addComment($conn);
-    break;
+  break;
   case 'DELETE':
-    if (!isset($_GET['id']) || empty($_GET['id'])) exit('id');
-    if (!isCommentAuthor($conn) && !isAdmin($conn)) exit('author');
+    if (!isset($_GET['id']) || empty($_GET['id'])) exit(noParameter('id'));
+    if (!isCommentAuthor($conn) && !isAdmin($conn)) exit(notAuthor());
     deleteComment($conn);
-    break;
+  break;
+  default:
+    header('HTTP/1.1 404 Not Found');
+  break;
 }
-
-
 ?>

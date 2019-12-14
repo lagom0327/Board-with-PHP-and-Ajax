@@ -30,6 +30,14 @@ function get20User($conn) {
   $conn->close();
 }
 
+function editePermission($content, $id, $conn) {
+  $stmt = $conn->prepare("UPDATE lagom0327_users SET permission=? WHERE id=?");
+  $stmt->bind_param("si", $content, $id);
+  if (!$stmt->execute()) exit(json_encode('fail'));
+  $stmt->close();
+  echo json_encode('編輯成功');
+}
+
   function deleteUser($conn, $id) {
     $stmt = $conn->prepare("UPDATE lagom0327_users SET is_deleted=1 WHERE id=?");
     $stmt->bind_param("i", $id);
@@ -37,19 +45,40 @@ function get20User($conn) {
     echo json_encode('刪除成功');
   }
 
-  $method = $_SERVER['REQUEST_METHOD'];
-  if (!$sessionStatus) exit('nosession');
+  function notAuthor() {
+    echo(json_encode('You aren\'t the author!'));
+    header('HTTP/1.1 401  Unauthorized');
+  }
+  
+  function noParameter($str) {
+    echo(json_encode('lack of ' . $str));
+    header('HTTP/1.1 400 bad request');
+  }
 
-  if (!isSuperAdmin($conn)) exit('not super admin');
+  $method = $_SERVER['REQUEST_METHOD'];
+  if (!$sessionStatus || !isSuperAdmin($conn)) exit(notAutho());
+
+  
   switch ($method) {
     case 'GET':
-      // exit('GET');
       get20User($conn);
-      break;
+    break;
+    
+    case 'POST':
+      if(empty($_POST['id'])) exit(noParameter('id'));
+      if(empty($_POST['permissionOption'])) exit(noParameter('permission'));
+      if ($_POST['permissionOption'] !== 'normal' && $_POST['permissionOption'] !== 'admin') exit(header('HTTP/1.1 400 bad request'));
+      // exit(json_encode($_POST['permissionOption']));
+      editePermission($_POST['permissionOption'], $_POST['id'], $conn);
+    break;
     case 'DELETE':
-      if (!isset($_GET['id']) || empty($_GET['id'])) exit('id');
-      if (idIsSuperAdmin($_GET['id'])) exit('super admin cannot change');
+      if (!isset($_GET['id']) || empty($_GET['id'])) exit(noParameter('id'));
+      if (idIsSuperAdmin($_GET['id'])) exit(header('HTTP/1.1 400 bad request'));
       deleteUser($conn, $_GET['id']);
+    break;
+    default:
+      header('HTTP/1.1 404 Not Found');
+    break;
   }
 
 

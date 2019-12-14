@@ -18,6 +18,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    "arrow-parens": ["error", "as-needed"],
     "no-console": "off",
     'no-plusplus': [2, { allowForLoopAfterthoughts: true }],
   },

@@ -10,11 +10,11 @@ if (!isSuperAdmin()) header('Location: ./index.php');
 
 <!DOCTYPE html>
 <html>
-<?php include_once('head.php');?>
+<?php include_once('templ_head.php');?>
   <body>
-  <?php include_once('nav.php'); ?>
+  <?php include_once('templ_nav.php'); ?>
     <section class="container">
-    <div id="notation" class='alert alert-info hidden' role='alert'></div>
+    <div id="notation" class=''></div>
       <table class='users_table table-striped table-hover table-info'>
         <caption>List of users</caption>
           <thead>
@@ -36,7 +36,7 @@ if (!isSuperAdmin()) header('Location: ./index.php');
         
         <?php printPageBtn('super_admin', $page, countPages('users', $conn)); ?> 
     </section>
-    <script src='index.js'></script>
-    <script src="./handleNavClass.js"></script>
+    <script defer src="./handleNavClass.js"></script>
+    <script defer src='index.js'></script>
   </body>
 </html>

@@ -3,7 +3,7 @@ const usersTable = document.querySelector('.users_table');
 let originTarget;
 let originText = '';
 const messUrl = './handle_message.php';
-const userUrl = './handle_delete_user.php';
+const userUrl = './handle_user.php';
 
 
 function getCookie(cname) {
@@ -25,11 +25,11 @@ function getCookie(cname) {
 const userId = Number(getCookie('user_id'));
 const permission = getCookie('permission');
 
-const toggleShowBtn = (div) => {
+const toggleShowBtn = div => {
   $(div).find('.message__edite:first').toggleClass('hidden');
 };
 
-const printAddCommentFram = (target) => {
+const printAddCommentFram = target => {
   toggleShowBtn(target.closest('.message_edite_wrapper'));
   const section = document.createElement('section');
   $(section).addClass('comment_board');
@@ -45,11 +45,12 @@ const printAddCommentFram = (target) => {
 };
 
 const changeEditeFrame = (type, e) => {
-  const showEditeFrame = (btn) => {
+  const showEditeFrame = btn => {
     const printEditeUserForm = (data, selector, text) => {
       const newData = data;
       newData.querySelector(selector[1]).innerHTML = `
       <form class='edite__user' method='POST' action='handle_edite_user.php?id=${btn.dataset.id}'>
+        <input type="hidden" name='id' value=${btn.dataset.id} />
         <select name='permissionOption'>
           <option ${(text === 'normal') ? 'selected' : ''} value='normal'>normal</option>
           <option ${(text === 'admin') ? 'selected' : ''} value='admin'>admin</option>
@@ -82,7 +83,7 @@ const changeEditeFrame = (type, e) => {
   };
 
   const reinstate = () => {
-    const reverseShowEditeFrame = (text) => {
+    const reverseShowEditeFrame = text => {
       const selector = (type === 'user') ? ['.user_data', '.permission__th'] : ['.message', 'form'];
       const data = originTarget.closest(selector[0]);
       toggleShowBtn(data);
@@ -113,7 +114,7 @@ const changeEditeFrame = (type, e) => {
     originText = '';
   }
   window.addEventListener('keydown',
-    (el) => {
+    el => {
       if (el.keyCode === 27) {
         reinstate();
         originTarget = null;
@@ -121,22 +122,33 @@ const changeEditeFrame = (type, e) => {
     });
 };
 
-const whenError = (obj) => {
+const whenError = obj => {
   console.log('error', obj);
   alert('發生錯誤: ', obj.status);
 };
 
-const showAlert = (message) => {
-  const div = `<div class="alert">${message}</div>`;
-  $('body').prepend(div);
+const showAlert = (message, type) => {
+  const div = type === 'fewtime' ? `
+  <div id="process" class="alert alert-dismissible alert-primary">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>${message}</strong>
+</div>
+  ` : `
+  <div class="alert alert-dismissible alert-info">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>${message}</strong>
+</div>
+  `;
+  if (type === 'fewtime') $('body').prepend(div);
+  else $('#notation').prepend(div);
 };
 
 const hiddenAlert = () => {
-  $('.alert').remove();
+  $('#process').remove();
 };
 
 const reRenderMessages = () => {
-  const createEditeSectionHtml = (data) => {
+  const createEditeSectionHtml = data => {
     if (data.user_id !== userId && permission !== 'admin') return '';
     return `
     <div class="message__edite">
@@ -148,12 +160,12 @@ const reRenderMessages = () => {
   const createChildMessHtml = (nthData, parentId) => {
     let str = '';
     if (!nthData.sub) return str;
-    nthData.sub.forEach((e) => {
+    nthData.sub.forEach(e => {
       const sameAuthor = e.user_id === parentId ? 'author' : '';
       str += `
       <div class="card bg-light w-75 child_message message ${sameAuthor}">
       <div class="card-body">
-      <h5 class="card-title message__nickname">From: ${e.nickname}</h5>
+      <h5 class="card-title message__nickname">${e.nickname}</h5>
       <h6 class="card-subtitle mb-2 text-muted message__time">${e.created_at}</h6>
       <p class='card-text'>${e.content}</p>
       ${createEditeSectionHtml(e)}
@@ -163,11 +175,11 @@ const reRenderMessages = () => {
     return str;
   };
 
-  const replaceMessages = (data) => {
+  const replaceMessages = data => {
     $('.messages > .message').each((index, el) => {
       const str = `
       <div class='card-body'>
-        <h4 class="card-title message__nickname">From: ${data[index].main.nickname}</h4>
+        <h4 class="card-title message__nickname">${data[index].main.nickname}</h4>
         <h5 class="card-subtitle mb-2 text-muted message__time">${data[index].main.created_at}</h5>
       <p class='card-text'>${data[index].main.content}</p>
       ${createEditeSectionHtml(data[index].main)}
@@ -183,7 +195,7 @@ const reRenderMessages = () => {
     url: messUrl,
     dataType: 'json',
     error: jqXHR => whenError(jqXHR),
-    success: (data) => {
+    success: data => {
       replaceMessages(data);
       originTarget = null;
       originText = '';
@@ -193,16 +205,16 @@ const reRenderMessages = () => {
 };
 
 const reRenderUser = () => {
-  const createEditeSectionHtml = (data) => {
-    return data.id === 1 ? '' : `
+  const createEditeSectionHtml = data => (
+    data.id === 1 ? '' : `
     <div class="message__edite">
       <button class="edite_btn btn icon" title="edite" data-id=${data.id}/>
       <button title="delete" class="btn delete_btn icon" data-id=${data.id} data-type="user" />
     </div>
-    `;
-  };
+    `
+  );
 
-  const replaceUsers = (data) => {
+  const replaceUsers = data => {
     $('.users_table tbody tr').each((index, el) => {
       const str = `
       <th scope="row" align="center" class="user_table__td">${data[index].id}</th>
@@ -220,7 +232,7 @@ const reRenderUser = () => {
     url: userUrl,
     dataType: 'json',
     error: jqXHR => whenError(jqXHR),
-    success: (data) => {
+    success: data => {
       replaceUsers(data);
       originTarget = null;
       originText = '';
@@ -239,27 +251,23 @@ const sendRequest = (method, target) => {
     data: $(target).closest('form').serialize(),
     error: jqXHR => whenError(jqXHR),
     success: () => {
-      showAlert('Under processing');
+      showAlert('Under processing', 'fewtime');
       reRenderMessages();
     },
   });
 };
 const sendUserRequest = (method, target) => {
-  const url = method === 'DELETE' ? `./handle_delete_user.php?id=${$(target).data('id')}` : './handle_user.php';
+  const url = method === 'DELETE' ? `${userUrl}?id=${$(target).data('id')}` : userUrl;
   console.log('url', url);
-  // if (method === 'DELETE') url = `${messUrl}?id=${$(target).data('id')}`;
   $.ajax({
     type: method,
     url,
     dataType: 'json',
     data: $(target).closest('form').serialize(),
     error: jqXHR => whenError(jqXHR),
-    success: (res) => {
-      showAlert('Under processing');
-      $('#notation').html(res);
-      document.getElementById("notation").classList.remove('hidden');
-      // $('#notation')
-      // $('#notation').removeClass('hidden');
+    success: res => {
+      showAlert('Under processing', 'fewtime');
+      showAlert(res);
       reRenderUser();
     },
   });
@@ -268,12 +276,12 @@ const sendUserRequest = (method, target) => {
 // 後端根據是否拿到 parentId ID決定是增加子留言、編輯或新增主留言
 const addChildMess = target => sendRequest('POST', target);
 const updateMess = target => sendRequest('POST', target);
-const addMainMess = (target) => {
+const addMainMess = target => {
   if (sendRequest('POST', target)) $('.comment_board_text').val('');
 };
 const deleteMess = target => sendRequest('DELETE', target);
 
-const isEmpty = (target) => {
+const isEmpty = target => {
   const form = $(target).closest('form');
   if ($(form).find('textarea').val() !== '') return false;
   alert('empty');
@@ -282,7 +290,7 @@ const isEmpty = (target) => {
 
 if (messages) {
   messages.addEventListener('click',
-    (e) => {
+    e => {
       if ($(e.target).hasClass('delete_btn')) {
         if (window.confirm('是否確定刪除 ?'))deleteMess(e.target);
       } else if ($(e.target).hasClass('add_sub_commit_btn')) {
@@ -296,12 +304,12 @@ if (messages) {
     });
 } else if (usersTable) {
   usersTable.addEventListener('click',
-    (e) => {
+    e => {
       if ($(e.target).hasClass('delete_btn')) {
         if (window.confirm('是否確定刪除 ?')) sendUserRequest('DELETE', e.target);
       } else if ($(e.target).hasClass('edite__send_btn')) {
         e.preventDefault();
-        if (!isEmpty(e.target)) ;
+        if (!isEmpty(e.target)) sendUserRequest('POST', e.target);
         // updateUser(e.target);
       }
       changeEditeFrame('user', e);
@@ -309,7 +317,7 @@ if (messages) {
 }
 
 
-$('.comment_board_btn').click((e) => {
+$('.comment_board_btn').click(e => {
   e.preventDefault();
   if (!isEmpty(e.target)) addMainMess(e.target);
 });
