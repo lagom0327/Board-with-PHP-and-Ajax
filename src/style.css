@@ -1,5 +1,5 @@
-body {
-  font-family: "Noto Sans TC", sans-serif;
+body, button, pre {
+  font-family:  "Neucha", "Noto Sans TC", sans-serif;
 }
 h1, h2 {
    text-align: center;
@@ -54,6 +54,12 @@ h1, h2 {
 .messages {
   width: 70%;
   margin: 0 auto;
+}
+.message pre {
+  border: none;
+  border-color:rgb(134, 142, 150);
+  font-size: 1rem;
+  font-weight: 400;
 }
 .message__nickname, .message__time {
   display: inline-block;

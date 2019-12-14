@@ -7,7 +7,7 @@ function printCommentBoard() {
   echo "<h2 class='notation text-secondary'>Hello ~ " . escape($_SESSION['nickname']) . "</h2>";
   echo "<section class='comment_board' >";
   echo "<form method='POST' action='./handle_add.php' >
-          <div class='comment_board_input'><textarea class='w-100 comment_board_text' name='content' rows='10' placeholder='What do you want to say ?' required></textarea></div>";
+          <div class='comment_board_input'><textarea class='w-100 comment_board_text' name='content' rows='6' placeholder='What do you want to say ?' required></textarea></div>";
   echo "  <button type='submit' class='btn comment_board_btn btn-outline-info'>Send</button>";
   echo "</form>";
   echo "</section>";

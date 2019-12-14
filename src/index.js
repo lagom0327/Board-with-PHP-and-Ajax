@@ -6,21 +6,21 @@ const messUrl = './handle_message.php';
 const userUrl = './handle_user.php';
 
 
-function getCookie(cname) {
+const getCookie = cname => {
   const name = cname.concat('=');
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') {
-      c = c.substring(1);
+  ca.forEach(el => {
+    let cookie = el;
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1);
     }
-    if (c.indexOf(name) === 0) {
-      return c.substring(name.length, c.length);
+    if (cookie.indexOf(name) === 0) {
+      return cookie.substring(name.length, cookie.length);
     }
-  }
+  });
   return '';
-}
+};
 
 const userId = Number(getCookie('user_id'));
 const permission = getCookie('permission');
@@ -30,25 +30,24 @@ const toggleShowBtn = div => {
 };
 
 const printAddCommentFram = target => {
-  toggleShowBtn(target.closest('.message_edite_wrapper'));
-  const section = document.createElement('section');
-  $(section).addClass('comment_board');
-  section.innerHTML = `    
-  <form method='POST' action ='handle_add_child.php'>
-  <div class='comment_board_input'>
-  <input type='hidden' name='parentId' value=${target.dataset.id} >
-  <textarea class='w-100' name='content' rows='5' placeholder='What do you want to say ?' required></textarea>
-  </div>
-  <button type='submit' class='add_sub_commit_btn btn btn-outline-secondary'>Send</button>
-</form>`;
-  target.closest('.card-body').appendChild(section);
+  toggleShowBtn($(target).closest('.message_edite_wrapper'));
+  $(target).closest('.card-body').append(`
+    <section class="comment_board">
+      <form method='POST' action ='handle_add_child.php'>
+        <div class='comment_board_input'>
+          <input type='hidden' name='parentId' value=${target.dataset.id} >
+          <textarea class='w-100' name='content' rows='5' placeholder='What do you want to say ?' required></textarea>
+        </div>
+        <button type='submit' class='add_sub_commit_btn btn btn-outline-secondary'>Send</button>
+      </form>
+    </section>
+  `);
 };
 
 const changeEditeFrame = (type, e) => {
   const showEditeFrame = btn => {
     const printEditeUserForm = (data, selector, text) => {
-      const newData = data;
-      newData.querySelector(selector[1]).innerHTML = `
+      $(data).find(selector[1]).html(`
       <form class='edite__user' method='POST' action='handle_edite_user.php?id=${btn.dataset.id}'>
         <input type="hidden" name='id' value=${btn.dataset.id} />
         <select name='permissionOption'>
@@ -56,7 +55,8 @@ const changeEditeFrame = (type, e) => {
           <option ${(text === 'admin') ? 'selected' : ''} value='admin'>admin</option>
         </select>
         <button type='submit' class='btn edite__send_btn icon ' ></button>
-      </form>`;
+      </form>
+      `);
     };
 
     const printEditeMessForm = (node, selector, text) => {
@@ -65,15 +65,15 @@ const changeEditeFrame = (type, e) => {
       <form method='POST' action='handle_edite.php?id=${btn.dataset.id}'>
         <input type='hidden' name='id' value=${btn.dataset.id}>
         <textarea name='content' rows='5' class='w-100 edite_comment__board' required>${text}</textarea>
-        <span class="cancel-text">按下 Esc 可取消</span>
+        <button type="button" title="或按 ESC" class="cancel_btn btn btn-outline-secondary">取消</button>
         <button type='submit' class='btn edite__send_btn icon' ></button>
       </form>`;
     };
 
-    const selector = (type === 'user') ? ['.user_data', '.permission__th'] : ['.message', 'p'];
+    const selector = (type === 'user') ? ['.user_data', '.permission__th'] : ['.message', '.message__content'];
     const data = btn.closest(selector[0]);
     toggleShowBtn(data);
-    const text = data.querySelector(selector[1]).innerHTML;
+    const text = $(data).find(selector[1]).html();
     if (type === 'user') {
       printEditeUserForm(data, selector, text);
     } else {
@@ -87,8 +87,9 @@ const changeEditeFrame = (type, e) => {
       const selector = (type === 'user') ? ['.user_data', '.permission__th'] : ['.message', 'form'];
       const data = originTarget.closest(selector[0]);
       toggleShowBtn(data);
-      if (type === 'user') data.querySelector(selector[1]).innerHTML = `${text}`;
-      else data.querySelector(selector[1]).outerHTML = `<p>${text}</p>`;
+      if (type === 'user') $(data).find(selector[1]).html(text);
+      // data.querySelector(selector[1]).innerHTML = `${text}`;
+      else data.querySelector(selector[1]).outerHTML = `<pre class='card-text message__content'>${text}</pre>`;
     };
 
     const reverseShowAddFrame = () => {
@@ -98,20 +99,23 @@ const changeEditeFrame = (type, e) => {
     };
 
     if (!originTarget) return null;
-    if (originTarget.classList.contains('edite_btn')) return reverseShowEditeFrame(originText);
-    if (originTarget.classList.contains('add_btn')) return reverseShowAddFrame();
+    if ($(originTarget).hasClass('edite_btn')) return reverseShowEditeFrame(originText);
+    if ($(originTarget).hasClass('add_btn')) return reverseShowAddFrame();
     return null;
   };
 
-  if (e.target.classList.contains('edite_btn')) {
+  if ($(e.target).hasClass('edite_btn')) {
     reinstate();
     originTarget = e.target;
     originText = showEditeFrame(e.target);
-  } else if (e.target.classList.contains('add_btn')) {
+  } else if ($(e.target).hasClass('add_btn')) {
     reinstate();
     originTarget = e.target;
     printAddCommentFram(e.target);
     originText = '';
+  } else if ($(e.target).hasClass('cancel_btn')) {
+    reinstate();
+    originTarget = null;
   }
   window.addEventListener('keydown',
     el => {
@@ -167,7 +171,7 @@ const reRenderMessages = () => {
       <div class="card-body">
       <h5 class="card-title message__nickname">${e.nickname}</h5>
       <h6 class="card-subtitle mb-2 text-muted message__time">${e.created_at}</h6>
-      <p class='card-text'>${e.content}</p>
+      <pre class='message__content card-text'>${e.content}</pre>
       ${createEditeSectionHtml(e)}
       </div>
       </div>`;
@@ -181,7 +185,7 @@ const reRenderMessages = () => {
       <div class='card-body'>
         <h4 class="card-title message__nickname">${data[index].main.nickname}</h4>
         <h5 class="card-subtitle mb-2 text-muted message__time">${data[index].main.created_at}</h5>
-      <p class='card-text'>${data[index].main.content}</p>
+      <pre class='card-text message__content'>${data[index].main.content}</pre>
       ${createEditeSectionHtml(data[index].main)}
       ${createChildMessHtml(data[index], data[index].main.user_id)}
           <button class="add_btn btn icon" title="Add Comment" data-id="${data[index].main.id}"></button>
@@ -244,7 +248,7 @@ const reRenderUser = () => {
 const sendRequest = (method, target) => {
   let url = messUrl;
   if (method === 'DELETE') url = `${messUrl}?id=${$(target).data('id')}`;
-  $.ajax({
+  return $.ajax({
     type: method,
     url,
     dataType: 'json',
@@ -253,6 +257,7 @@ const sendRequest = (method, target) => {
     success: () => {
       showAlert('Under processing', 'fewtime');
       reRenderMessages();
+      return true;
     },
   });
 };

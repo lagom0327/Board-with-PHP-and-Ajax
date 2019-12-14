@@ -49,7 +49,7 @@
       Nav
     </a>
     <a class="navbar-brand-two mx-auto d-lg-none d-inline-block" href="#">
-       <img src="//placehold.it/40?text=LOGO" alt="Nav">
+       <!-- <img src="//placehold.it/40?text=LOGO" alt="Nav"> -->
     </a>
     <div class="w-100 text-right">
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar">
