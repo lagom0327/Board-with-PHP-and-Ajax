@@ -1,0 +1,25 @@
+{
+  "name": "board",
+  "version": "1.0.0",
+  "description": "之前在課程中講過 Bootstrap 這一個好用的 library，能夠讓你把版面變得好看一點，現在就請你利用 Bootstrap 改造之前的留言板 UI。",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lagom0327/Board-with-PHP-and-Ajax.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lagom0327/Board-with-PHP-and-Ajax/issues"
+  },
+  "homepage": "https://github.com/lagom0327/Board-with-PHP-and-Ajax#readme"
+}

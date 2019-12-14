@@ -27,7 +27,7 @@ h1 {
   text-shadow: 0.1em 0.1em 0.2em black
 }
 
-nav {
+/* nav {
   background: black;
   position: fixed;
   top: 0;
@@ -61,8 +61,8 @@ nav > ul {
 }
 .nav__list:hover {
   border-bottom: 1px solid var(--white);
-}
-.notation {
+} */
+/* .notation {
   text-align: center;
   margin-top: 55px;
 }
@@ -87,7 +87,7 @@ input, textarea {
 
 input[name='parentId'] {
   display: none;
-}
+} */
 
 .icon_in_input {
   position: relative;
@@ -239,7 +239,6 @@ form > p {
 }
 
 .add_btn.icon::before {
-  /* content: "\f2ed"; */
   content: "\f0fe";
 }
 
@@ -282,8 +281,8 @@ form > p {
 }
 
 .btn {
-  background: black;
-  color: var(--white);
+  /* background: black; */
+  /* color: var(--white); */
   width: 4em;
   margin: 10px auto;
   display: block;
@@ -363,6 +362,9 @@ input.btn:hover {
   z-index: 1;
 }
 
+@media (min-width: 768px)
+
+}
 
 @media (max-width: 400px) {
   .form {

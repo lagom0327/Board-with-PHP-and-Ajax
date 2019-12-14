@@ -3,6 +3,8 @@ const usersTable = document.querySelector('.users_table');
 let originTarget;
 let originText = '';
 const messUrl = './handle_message.php';
+const userUrl = './handle_delete_user.php';
+
 
 function getCookie(cname) {
   const name = cname.concat('=');
@@ -33,13 +35,13 @@ const printAddCommentFram = (target) => {
   $(section).addClass('comment_board');
   section.innerHTML = `    
   <form method='POST' action ='handle_add_child.php'>
-  <div class='comment_board_intput'>
-  <input type='hideen' name='parentId' value=${target.dataset.id} >
-  <textarea name='content' rows='5' placeholder='What do you want to say ?' required></textarea>
+  <div class='comment_board_input'>
+  <input type='hidden' name='parentId' value=${target.dataset.id} >
+  <textarea class='w-100' name='content' rows='5' placeholder='What do you want to say ?' required></textarea>
   </div>
-  <input type='submit' class='add_sub_commit_btn btn' value='Send' />
+  <button type='submit' class='add_sub_commit_btn btn btn-outline-secondary'>Send</button>
 </form>`;
-  target.closest('.message').appendChild(section);
+  target.closest('.card-body').appendChild(section);
 };
 
 const changeEditeFrame = (type, e) => {
@@ -52,7 +54,7 @@ const changeEditeFrame = (type, e) => {
           <option ${(text === 'normal') ? 'selected' : ''} value='normal'>normal</option>
           <option ${(text === 'admin') ? 'selected' : ''} value='admin'>admin</option>
         </select>
-        <button type='submit' class='btn edite__send_btn icon' ></button>
+        <button type='submit' class='btn edite__send_btn icon ' ></button>
       </form>`;
     };
 
@@ -61,8 +63,8 @@ const changeEditeFrame = (type, e) => {
       newNode.querySelector(selector[1]).outerHTML = `
       <form method='POST' action='handle_edite.php?id=${btn.dataset.id}'>
         <input type='hidden' name='id' value=${btn.dataset.id}>
-        <textarea name='content' rows='5' class='edite_comment__board' required>${text}</textarea>
-        <p>按下 Esc 可取消</p>
+        <textarea name='content' rows='5' class='w-100 edite_comment__board' required>${text}</textarea>
+        <span class="cancel-text">按下 Esc 可取消</span>
         <button type='submit' class='btn edite__send_btn icon' ></button>
       </form>`;
     };
@@ -149,13 +151,13 @@ const reRenderMessages = () => {
     nthData.sub.forEach((e) => {
       const sameAuthor = e.user_id === parentId ? 'author' : '';
       str += `
-      <div class="child_message message ${sameAuthor}">
-      <header>
-      <h4 class="message__nickname">From: ${e.nickname}</h4>
-      <h4 class="message__time">${e.created_at}</h4>
-      </header>
-      <p>${e.content}</p>
+      <div class="card bg-light w-75 child_message message ${sameAuthor}">
+      <div class="card-body">
+      <h5 class="card-title message__nickname">From: ${e.nickname}</h5>
+      <h6 class="card-subtitle mb-2 text-muted message__time">${e.created_at}</h6>
+      <p class='card-text'>${e.content}</p>
       ${createEditeSectionHtml(e)}
+      </div>
       </div>`;
     });
     return str;
@@ -164,17 +166,13 @@ const reRenderMessages = () => {
   const replaceMessages = (data) => {
     $('.messages > .message').each((index, el) => {
       const str = `
-      <header>
-        <h3 class="message__nickname">From: ${data[index].main.nickname}</h3>
-        <h4 class="message__time">${data[index].main.created_at}</h4>
-      </header>
-      <p>${data[index].main.content}</p>
+      <div class='card-body'>
+        <h4 class="card-title message__nickname">From: ${data[index].main.nickname}</h4>
+        <h5 class="card-subtitle mb-2 text-muted message__time">${data[index].main.created_at}</h5>
+      <p class='card-text'>${data[index].main.content}</p>
       ${createEditeSectionHtml(data[index].main)}
       ${createChildMessHtml(data[index], data[index].main.user_id)}
-      <div class="message_edite_wrapper">
-        <div class="message__edite">
           <button class="add_btn btn icon" title="Add Comment" data-id="${data[index].main.id}"></button>
-        </div>
       </div>`;
       $(el).html(str);
     });
@@ -194,6 +192,43 @@ const reRenderMessages = () => {
   });
 };
 
+const reRenderUser = () => {
+  const createEditeSectionHtml = (data) => {
+    return data.id === 1 ? '' : `
+    <div class="message__edite">
+      <button class="edite_btn btn icon" title="edite" data-id=${data.id}/>
+      <button title="delete" class="btn delete_btn icon" data-id=${data.id} data-type="user" />
+    </div>
+    `;
+  };
+
+  const replaceUsers = (data) => {
+    $('.users_table tbody tr').each((index, el) => {
+      const str = `
+      <th scope="row" align="center" class="user_table__td">${data[index].id}</th>
+      <td class="user_table__td">${data[index].username}</td>
+      <td class="user_table__td">${data[index].nickname}</td>
+      <td class="user_table__td permission__th">${data[index].permission}</td>
+      <td class="user_table__td">${createEditeSectionHtml(data[index])}</td>
+      `;
+      $(el).html(str);
+    });
+  };
+
+  $.ajax({
+    type: 'GET',
+    url: userUrl,
+    dataType: 'json',
+    error: jqXHR => whenError(jqXHR),
+    success: (data) => {
+      replaceUsers(data);
+      originTarget = null;
+      originText = '';
+      hiddenAlert();
+    },
+  });
+};
+
 const sendRequest = (method, target) => {
   let url = messUrl;
   if (method === 'DELETE') url = `${messUrl}?id=${$(target).data('id')}`;
@@ -206,6 +241,26 @@ const sendRequest = (method, target) => {
     success: () => {
       showAlert('Under processing');
       reRenderMessages();
+    },
+  });
+};
+const sendUserRequest = (method, target) => {
+  const url = method === 'DELETE' ? `./handle_delete_user.php?id=${$(target).data('id')}` : './handle_user.php';
+  console.log('url', url);
+  // if (method === 'DELETE') url = `${messUrl}?id=${$(target).data('id')}`;
+  $.ajax({
+    type: method,
+    url,
+    dataType: 'json',
+    data: $(target).closest('form').serialize(),
+    error: jqXHR => whenError(jqXHR),
+    success: (res) => {
+      showAlert('Under processing');
+      $('#notation').html(res);
+      document.getElementById("notation").classList.remove('hidden');
+      // $('#notation')
+      // $('#notation').removeClass('hidden');
+      reRenderUser();
     },
   });
 };
@@ -242,11 +297,31 @@ if (messages) {
 } else if (usersTable) {
   usersTable.addEventListener('click',
     (e) => {
+      if ($(e.target).hasClass('delete_btn')) {
+        if (window.confirm('是否確定刪除 ?')) sendUserRequest('DELETE', e.target);
+      } else if ($(e.target).hasClass('edite__send_btn')) {
+        e.preventDefault();
+        if (!isEmpty(e.target)) ;
+        // updateUser(e.target);
+      }
       changeEditeFrame('user', e);
     });
 }
+
 
 $('.comment_board_btn').click((e) => {
   e.preventDefault();
   if (!isEmpty(e.target)) addMainMess(e.target);
 });
+
+const scrollFunction = () => {
+  if ($(window).scrollTop() > 60) {
+    $('#navbar').css('padding', '0.2rem 0.5rem');
+    $('#logo').css('font-size', '1rem');
+  } else {
+    $('#navbar').css('padding', '0.5rem 1rem');
+    $('#logo').css('font-size', '1.25rem');
+  }
+};
+
+$(window).scroll(() => scrollFunction());

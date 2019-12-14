@@ -31,11 +31,7 @@
     }
 
     function printAddComentBtn($row) {
-      echo "<div class='message_edite_wrapper'>";
-      echo "<div class='message__edite'>";
       echo   "<button class='add_btn btn icon' title='Add Comment' data-id={$row['id']}></button>";
-      echo "</div>";
-      echo "</div>";
     }
 
     // 列印換頁按紐用 ------------------------------
@@ -55,17 +51,52 @@
     }
 
     function printPageBtn($type, $pageNow, $totalPage) {
-      echo "<section class='page_btn__section'>";
+      $prePage = $pageNow - 1;
+      $nextPage = $pageNow + 1;
+      echo  "
+        <nav class='my-3' aria-label='pagination'>
+          <ul class='justify-content-center pagination pagination'>
+            ";
+      if ((int)$pageNow === 1) echo "
+      <li class='page-item disabled'>
+        <a class='page-link' href='#' tabindex='-1' aria-disabled='true'><span aria-hidden='true'>&laquo;</span></a>
+      </li>";
+      else echo "
+            <li class='page-item'>
+              <a class='page-link' href='./$type.php?page=$prePage' aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>
+            </li>";
         for ($i = 1; $i <= $totalPage; $i++) {
-          if ($i === (int)$pageNow) echo "<button class='page_btn btn active' data-page='$i' >$i</button>";
-          else echo "<a href='./$type.php?page=$i'><button class='page_btn btn' data-page='$i' >$i</button></a>";
+          if ($i === (int)$pageNow) echo "
+          <li class='page-item active page_btn' aria-current='page' data-page='$i'>
+            <span class='page-link'>
+              $i
+              <span class='sr-only'>(current)</span>
+            </span>
+          </li>
+          ";
+          else echo "
+          <li class='page-item page_btn'><a class='page-link' href='./$type.php?page=$i'>$i</a></li>
+          ";
         }
-      echo "</section>";
+        if ((int)$pageNow === (int)$totalPage) echo "        
+          <li class='page-item disabled'>
+            <a class='page-link' href='#' tabindex='-1' aria-disabled='true'>&raquo;</a>
+          </li>";
+        else echo "        
+        <li class='page-item'>
+          <a class='page-link' href='./$type.php?page=$nextPage' aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>
+        </li>";
+        echo "
+            </ul>
+          </nav>
+        ";
     }
     // 列印使用者資料-----------
     function printUser($row) {
       echo "<tr class='user_data'>
-              　<td class='user_table__td'>{$row['id']}</td>
+              　<th scope='row'  align='center' class='user_table__td'>";
+              echo $row['id'];
+              echo "</th>
               　<td class='user_table__td'>". escape($row['username']) . "</td>
               　<td class='user_table__td'>" . escape($row['nickname']) . "</td>
               　<td class='user_table__td permission__th'>{$row['permission']}</td>
@@ -84,32 +115,36 @@
       if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
           $authorClass = ($parentData['user_id'] === $row['user_id']) ? 'author' : '';
-          echo "<div class='child_message message  $authorClass'>";
-          echo  "<header>";
-          echo    "<h4 class='message__nickname'>From: " . escape($row['nickname']) . "</h4>";
-          echo    "<h4 class='message__time'>{$row['created_at']}</h4>";
-          echo  "</header>";
-          echo  "<p>" . escape($row['content']) . "</p>";
+          echo "<div class='card bg-light child_message message  $authorClass'>";
+          echo  "<div class='card-body'>";
+          echo "<div class='message__header'>";
+          echo    "<h5 class='card-title message__nickname'>" . escape($row['nickname']) . "</h5>";
+          echo    "<h6 class='float-right text-muted message__time'>{$row['created_at']}</h6>";
+          echo "</div>";
+          echo  "<p class='card-text message__content'>" . escape($row['content']) . "</p>";
           if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === (int)$row['user_id'] || isAdmin()) {
             printEditeSection('comment', $row['id']);
           }
+          echo "</div>";
           echo "</div>";
         }
       }
     }
 
     function printMessage($row, $conn, $sessionStatus) {
-      echo "<div class='message'>";
-      echo  "<header>";
-      echo    "<h3 class='message__nickname'>From: " . escape($row['nickname']) . "</h3>";
-      echo    "<h4 class='message__time'>{$row['created_at']}</h4>";
-      echo  "</header>";
-      echo  "<p>" . escape($row['content']) . "</p>";
+      echo "<div class='card bg-light message w-100'>";
+      echo   "<div class='card-body'>";
+      echo "<div class='message__header'>";
+      echo    "<h4 class='card-title message__nickname'>" . escape($row['nickname']) . "</h4>";
+      echo    "<h5 class='float-right text-muted message__time'>{$row['created_at']}</h5>";
+      echo "</div>";
+      echo  "<p class='card-text message__content'>" . escape($row['content']) . "</p>";
       if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === (int)$row['user_id'] || isAdmin()) {
         printEditeSection('comment', $row['id']);
       }
       printChildMessage($row, $conn);
       if ($sessionStatus) printAddComentBtn($row);
+      echo  "</div>";
       echo "</div>";
     }
     // -----------------------
