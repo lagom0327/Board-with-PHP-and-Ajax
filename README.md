@@ -47,6 +47,15 @@
   - 同一時間只能編輯或新增一個留言
 - 用 Admin 帳號登入時，在 `index.php` 或 `admin.php` 能處理所有人的留言
 - 使用 Super Admin 帳號登入時，可修改其他會員的權限或刪除會員
+  - 修改或刪除會員後，會在 table 上方出現 `alert`
+
+- 防止 SQL Injection :　`Prepared Statement` 指定插入值的格式
+- 防止 XSS : `htmlspecialchars`
+  ```php
+    function escape($str) {
+      return htmlspecialchars($str, ENT_QUOTES, 'utf-8');
+    }
+  ```
 
 - 會員系統
   - 使用 MySQL 存儲會員資料，密碼用 Hash（單向雜湊）加密和 使用 `password_verify` 函式確認密碼
@@ -63,6 +72,9 @@
   - 使用 PHP Session 建立通行機制
     - 通行證有效時間 24 hr
     - 使用中換 IP 會使通行證無效，需重新登入
+
+
+
 
 ## Built With
 - [jQuery](https://jquery.com/) 
