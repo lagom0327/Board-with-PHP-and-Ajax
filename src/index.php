@@ -16,9 +16,9 @@ function printCommentBoard() {
 
 <!DOCTYPE html>
 <html>
-<?php include_once('templ_head.php');?>
+<?php include_once('./template/templ_head.php');?>
   <body>
-  <?php include_once('templ_nav.php'); ?>
+  <?php include_once('./template/templ_nav.php'); ?>
     <section class="container">
       <?php if ($sessionStatus) printCommentBoard(); ?>
       <div class="messages">

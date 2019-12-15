@@ -8,9 +8,9 @@ if (!isAdmin($conn)) header('Location: ./index.php');
 ?>
 <!DOCTYPE html>
 <html>
-<?php include_once('templ_head.php');?>
+<?php include_once('./template/templ_head.php');?>
   <body>
-  <?php include_once('templ_nav.php'); ?>
+  <?php include_once('template/templ_nav.php'); ?>
     <section class="container">
       <div class="messages">
         <?php 

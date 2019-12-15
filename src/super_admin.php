@@ -10,9 +10,9 @@ if (!isSuperAdmin()) header('Location: ./index.php');
 
 <!DOCTYPE html>
 <html>
-<?php include_once('templ_head.php');?>
+<?php include_once('./template/templ_head.php');?>
   <body>
-  <?php include_once('templ_nav.php'); ?>
+  <?php include_once('./template/templ_nav.php'); ?>
     <section class="container">
     <div id="notation" class=''></div>
       <table class='users_table table-striped table-hover table-info'>

@@ -1,8 +1,8 @@
 <?php
-require_once('./conn.php');
-require_once('./sessionStatus.php');
-require_once('./function/isCommentAuthor.php');
-require_once('./function/isAdmin.php');
+require_once(dirname(dirname(__FILE__)) . '/conn.php');
+require_once(dirname(dirname(__FILE__)) . '/sessionStatus.php');
+require_once(dirname(dirname(__FILE__)) . '/function/isCommentAuthor.php');
+require_once(dirname(dirname(__FILE__)) . '/function/isAdmin.php');
 
 header('Content-Type: application/json; charset=UTF-8'); 
 

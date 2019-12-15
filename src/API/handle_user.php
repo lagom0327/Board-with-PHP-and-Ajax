@@ -1,15 +1,15 @@
 <?php
-  require_once('./conn.php'); 
-  require_once('./sessionStatus.php');
-  require_once('./function/isSuperAdmin.php');
-  require_once('./function/idIsSuperAdmin.php');
+  require_once(dirname(dirname(__FILE__)) . '/conn.php');
+  require_once(dirname(dirname(__FILE__)) . '/sessionStatus.php');
+  require_once(dirname(dirname(__FILE__)) . '/function/isSuperAdmin.php');
+  require_once(dirname(dirname(__FILE__)) . '/function/idIsSuperAdmin.php');
   header('Content-Type: application/json; charset=UTF-8'); 
 
 function get20User($conn) {
   $page = isset($_GET['page']) ? $_GET['page'] : 1;
   function escape($str) {
     return htmlspecialchars($str, ENT_QUOTES, 'utf-8');
-  }
+ }
 
 
   $offset = ($page - 1) * 20;
@@ -68,12 +68,10 @@ function editePermission($content, $id, $conn) {
     case 'GET':
       get20User($conn);
     break;
-    
     case 'POST':
       if(empty($_POST['id'])) exit(noParameter('id'));
       if(empty($_POST['permissionOption'])) exit(noParameter('permission'));
       if ($_POST['permissionOption'] !== 'normal' && $_POST['permissionOption'] !== 'admin') exit(header('HTTP/1.1 400 bad request'));
-      // exit(json_encode($_POST['permissionOption']));
       editePermission($_POST['permissionOption'], $_POST['id'], $conn);
     break;
     case 'DELETE':
@@ -85,11 +83,4 @@ function editePermission($content, $id, $conn) {
       header('HTTP/1.1 404 Not Found');
     break;
   }
-
-
-  // if (!isSuperAdmin($conn) || !$_GET['id']) header('Location: ./super_admin.php');
-  // if (idIsSuperAdmin($_GET['id'])) die('super admin cannot change');
-  // deleteUser($conn);
-  // header("Location: ./super_admin.php"); 
-
 ?>

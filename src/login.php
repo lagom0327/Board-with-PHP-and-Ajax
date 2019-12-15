@@ -8,9 +8,9 @@
 ?>
 <!DOCTYPE html>
 <html>
-<?php include_once('templ_head.php');?>
+<?php include_once('./template/templ_head.php');?>
   <body>
-  <?php include_once('templ_nav.php'); ?>
+  <?php include_once('./template/templ_nav.php'); ?>
 
     <section class="container">
       <h1 class="mb-3 mt-3">Login</h1>

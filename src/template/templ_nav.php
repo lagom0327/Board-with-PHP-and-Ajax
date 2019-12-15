@@ -1,8 +1,8 @@
 <?php
-  require_once('./conn.php');
-  require_once('./sessionStatus.php');
-  require_once('./function/isAdmin.php');
-  require_once('./function/isSuperAdmin.php');
+  require_once(dirname(dirname(__FILE__)) . '/conn.php');
+  require_once(dirname(dirname(__FILE__)) .  '/sessionStatus.php');
+  require_once(dirname(dirname(__FILE__)) . '/function/isAdmin.php');
+  require_once(dirname(dirname(__FILE__)) . '/function/isSuperAdmin.php');
 
   function printNav($sessionStatus) {
     function printLoginNav() {

@@ -2,8 +2,8 @@ const messages = document.querySelector('.messages');
 const usersTable = document.querySelector('.users_table');
 let originTarget;
 let originText = '';
-const messUrl = './handle_message.php';
-const userUrl = './handle_user.php';
+const messUrl = './API/handle_message.php';
+const userUrl = './API/handle_user.php';
 
 
 const getCookie = cname => {
@@ -318,8 +318,7 @@ if (messages) {
         if (window.confirm('是否確定刪除 ?')) sendUserRequest('DELETE', e.target);
       } else if ($(e.target).hasClass('edite__send_btn')) {
         e.preventDefault();
-        if (!isEmpty(e.target)) sendUserRequest('POST', e.target);
-        // updateUser(e.target);
+        sendUserRequest('POST', e.target);
       }
       changeEditeFrame('user', e);
     });
