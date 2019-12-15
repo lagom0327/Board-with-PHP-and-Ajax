@@ -121,7 +121,7 @@
           echo    "<h5 class='card-title message__nickname'>" . escape($row['nickname']) . "</h5>";
           echo    "<h6 class='float-right text-muted message__time'>{$row['created_at']}</h6>";
           echo "</div>";
-          echo  "<pre class='card-text message__content'>" . escape($row['content']) . "</pre>";
+          echo  "<p class='card-text message__content'>" . escape($row['content']) . "</p>";
           if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === (int)$row['user_id'] || isAdmin()) {
             printEditeSection('comment', $row['id']);
           }
@@ -138,7 +138,7 @@
       echo    "<h4 class='card-title message__nickname'>" . escape($row['nickname']) . "</h4>";
       echo    "<h5 class='float-right text-muted message__time'>{$row['created_at']}</h5>";
       echo "</div>";
-      echo  "<pre class='card-text message__content'>" . escape($row['content']) . "</pre>";
+      echo  "<p class='card-text message__content'>" . escape($row['content']) . "</p>";
       if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === (int)$row['user_id'] || isAdmin()) {
         printEditeSection('comment', $row['id']);
       }

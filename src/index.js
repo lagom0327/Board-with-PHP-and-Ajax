@@ -10,16 +10,17 @@ const getCookie = cname => {
   const name = cname.concat('=');
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
-  ca.forEach(el => {
-    let cookie = el;
+  let cookie;
+  return ca.some(el => {
+    cookie = el;
     while (cookie.charAt(0) === ' ') {
       cookie = cookie.substring(1);
     }
-    if (cookie.indexOf(name) === 0) {
-      return cookie.substring(name.length, cookie.length);
-    }
-  });
-  return '';
+    if (cookie.indexOf(name) !== 0) return false;
+    cookie = cookie.substring(name.length, cookie.length);
+    return true;
+  })
+    ? cookie : '';
 };
 
 const userId = Number(getCookie('user_id'));
@@ -89,7 +90,7 @@ const changeEditeFrame = (type, e) => {
       toggleShowBtn(data);
       if (type === 'user') $(data).find(selector[1]).html(text);
       // data.querySelector(selector[1]).innerHTML = `${text}`;
-      else data.querySelector(selector[1]).outerHTML = `<pre class='card-text message__content'>${text}</pre>`;
+      else data.querySelector(selector[1]).outerHTML = `<p class='card-text message__content'>${text}</p>`;
     };
 
     const reverseShowAddFrame = () => {
@@ -171,7 +172,7 @@ const reRenderMessages = () => {
       <div class="card-body">
       <h5 class="card-title message__nickname">${e.nickname}</h5>
       <h6 class="card-subtitle mb-2 text-muted message__time">${e.created_at}</h6>
-      <pre class='message__content card-text'>${e.content}</pre>
+      <p class='message__content card-text'>${e.content}</p>
       ${createEditeSectionHtml(e)}
       </div>
       </div>`;
@@ -185,7 +186,7 @@ const reRenderMessages = () => {
       <div class='card-body'>
         <h4 class="card-title message__nickname">${data[index].main.nickname}</h4>
         <h5 class="card-subtitle mb-2 text-muted message__time">${data[index].main.created_at}</h5>
-      <pre class='card-text message__content'>${data[index].main.content}</pre>
+      <p class='card-text message__content'>${data[index].main.content}</p>
       ${createEditeSectionHtml(data[index].main)}
       ${createChildMessHtml(data[index], data[index].main.user_id)}
           <button class="add_btn btn icon" title="Add Comment" data-id="${data[index].main.id}"></button>
@@ -287,8 +288,11 @@ const addMainMess = target => {
 const deleteMess = target => sendRequest('DELETE', target);
 
 const isEmpty = target => {
-  const form = $(target).closest('form');
-  if ($(form).find('textarea').val() !== '') return false;
+  let content = $(target).closest('form').find('textarea').val();
+  while (content.charAt(0) === ' ') {
+    content = content.substring(1);
+  }
+  if (content !== '') return false;
   alert('empty');
   return true;
 };

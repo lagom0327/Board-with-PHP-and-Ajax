@@ -9,6 +9,38 @@
 ### 管理權限後台畫面
 ![image](https://user-images.githubusercontent.com/49493665/70850441-5ca61400-1ec5-11ea-81f9-3935cb8724d6.png)
 
+## File Structure
+```
+.
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── manifest.json
+│   └── robots.txt
+├── src
+│   ├── components
+│   │   ├── Board.js
+│   │   ├── Controlsize.js
+│   │   ├── GameSteps.js
+│   │   └── Square.js
+│   ├── scss
+│   │   ├── Board.scss
+│   │   ├── Controlsize.css
+│   │   ├── GameSteps.scss
+│   │   ├── index.scss
+│   │   └── param.scss
+│   ├── index.js
+│   ├── reset.css
+│   ├── serviceWorker.js
+│   └── setupTests.js
+├── .eslintrcignore
+├── .eslintrc.js
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── README.md
+└── screenshot.png
+```
 
 - 編輯、刪除和新增都是使用 Ajax 不用換頁，集中到 `handle_messag.php` 和 `handle_user.php` API 處理，
 - 用 Admin 帳號登入時，在 `index.php` 或 `admin.php` 能處理所有人的留言
@@ -26,10 +58,9 @@
   }
   ```
   - 使用 PHP Session 建立通行機制
-<!-- ### 未完成
-- 按鈕沒有處理重複觸發 -->
 
-
-
-<!--prepared statement 中 table name 不能使用佔位符 -->
-<!-- Server response 格式不是指定的也會變 error -->
+## Built With
+- [jQuery](https://jquery.com/) 
+- [Bootstrap](https://getbootstrap.com/) / [Bootswatch](https://bootswatch.com/)
+- [ESLint](https://eslint.org/) : Lint Code
+- [AWS EC2](https://aws.amazon.com/tw/ec2/) / [Apache](https://httpd.apache.org/) : Deploy

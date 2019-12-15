@@ -47,7 +47,7 @@ function editePermission($content, $id, $conn) {
 
   function notAuthor() {
     echo(json_encode('You aren\'t the author!'));
-    header('HTTP/1.1 401  Unauthorized');
+    header('HTTP/1.1 403 forbidden');
   }
   
   function noParameter($str) {
@@ -56,7 +56,12 @@ function editePermission($content, $id, $conn) {
   }
 
   $method = $_SERVER['REQUEST_METHOD'];
-  if (!$sessionStatus || !isSuperAdmin($conn)) exit(notAutho());
+  if (!$sessionStatus) {
+    echo(json_encode('Your session has been terminated'));
+    header('HTTP/1.1 401 Unauthorized');
+    exit();
+  }
+  if (!isSuperAdmin($conn)) exit(notAutho());
 
   
   switch ($method) {

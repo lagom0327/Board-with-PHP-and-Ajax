@@ -19,6 +19,8 @@ function get20Mess($conn) {
     if ($result->num_rows <= 0) return $arr;
     $j = 0;
     while ($row = $result->fetch_assoc()) {
+      $row['nickname'] = escape($row['nickname']);
+      $row['content'] = escape($row['content']);
       $arr[$i]['sub'][$j] = $row;
       $j++;
     }
@@ -83,7 +85,7 @@ function deleteComment($conn) {
 
 function notAuthor() {
   echo(json_encode('You aren\'t the author!'));
-  header('HTTP/1.1 401  Unauthorized');
+  header('HTTP/1.1 403 forbidden');
 }
 
 function noParameter($str) {
@@ -93,7 +95,11 @@ function noParameter($str) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 
-if (!$sessionStatus) exit();
+if (!$sessionStatus) {
+  echo(json_encode('Your session has been terminated'));
+  header('HTTP/1.1 401 Unauthorized');
+  exit();
+}
 
 switch ($method) {
   case 'GET':

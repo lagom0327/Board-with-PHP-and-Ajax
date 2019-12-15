@@ -55,11 +55,12 @@ h1, h2 {
   width: 70%;
   margin: 0 auto;
 }
-.message pre {
-  border: none;
-  border-color:rgb(134, 142, 150);
-  font-size: 1rem;
-  font-weight: 400;
+.message .message__content {
+  /* border: none; */
+  /* border-color:rgb(134, 142, 150); */
+  /* font-size: 1rem; */
+  /* font-weight: 400; */
+  white-space: pre-wrap;
 }
 .message__nickname, .message__time {
   display: inline-block;
