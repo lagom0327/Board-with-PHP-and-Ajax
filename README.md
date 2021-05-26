@@ -1,5 +1,5 @@
 # 留言板
-## [Demo](http://sio2.tw/board/)
+## ~~[Demo](http://sio2.tw/board/) ~~
 ## Indruction 
 使用 PHP 、 MySQL 和 Ajax 建造留言板和建立會員系統部屬至 AWS EC2
 ## Screenshot 
